@@ -1,11 +1,12 @@
-import React, { Component, useReducer } from 'react';
-
+import React, { Component, useReducer, useState } from 'react';
+import { Link } from 'react-router-dom';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { withFirebase } from '../Firebase';
-import SemanticDatepicker from 'react-semantic-ui-datepickers';
-import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { Header, Loader, Table, Icon, Popup, Modal, Button, Form } from 'semantic-ui-react';
 const ModalAddDomain = props => {
     const { open, closeModalFn, saveModalFn } = props;
+    const [entryDate, setEntryDate] = useState(new Date());
     const [userInput, setUserInput] = useReducer(
         (state, newState) => ({ ...state, ...newState }),
         {
@@ -15,7 +16,7 @@ const ModalAddDomain = props => {
             gender: 'Male',
             about: '',
             email: '',
-            entrydate: ''
+            entrydate: `${entryDate}`
         }
     );
 
@@ -46,7 +47,7 @@ const ModalAddDomain = props => {
                             <Form.TextArea label='About' name="about" onChange={handleChange} placeholder='Some more information about the customer...' />
                         </Form.Group>
                         <Form.Group widths='equal'>
-                            <SemanticDatepicker onDateChange={(date) => console.log(date)} format="DD/MM/YYYY" onBlur={handleChange} name="entrydate" />
+                            <DatePicker selected={entryDate} onChange={setEntryDate} name="entrydate" />
                         </Form.Group>
                     </Form>
                 </>
@@ -96,7 +97,6 @@ class CustomersList extends Component {
                         ...customersObject[key],
                         uid: key,
                     }));
-                    console.log(customersList)
                     this.setState({
                         customers: customersList,
                         loading: false,
@@ -113,6 +113,8 @@ class CustomersList extends Component {
 
     deleteCustomer = uid => {
         this.props.firebase.customer(uid).remove();
+        const deleteCustomer = this.state.customers.filter(customer => customer.uid !== uid);
+        this.setState({ customers: deleteCustomer });
     };
 
     render() {
@@ -142,22 +144,21 @@ class CustomersList extends Component {
                                             <Table.Cell>
                                                 <Popup
                                                     trigger={
-                                                        <Icon
-                                                            name="save outline"
-                                                            color="green"
-                                                            onClick={() => console.log('Update customer')}
-                                                        />
+                                                        <Button basic compact circular icon as={Link} to={`/customer/${c.uid}`}>
+                                                            <Icon name='save outline' color="green" />
+                                                        </Button>
                                                     }
                                                     content="Update"
                                                     position="top center"
-                                                />
+                                                    />
                                                 <Popup
                                                     trigger={
-                                                        <Icon
-                                                            name="trash alternate outline"
-                                                            color="red"
-                                                            onClick={() => this.deleteCustomer(c.uid)}
-                                                        />
+                                                        <Button basic compact circular icon onClick={() => this.deleteCustomer(c.uid)}>
+                                                            <Icon
+                                                                name="trash alternate outline"
+                                                                color="red"
+                                                                />
+                                                        </Button>
                                                     }
                                                     content="Delete"
                                                     position="top center"

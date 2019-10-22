@@ -16,6 +16,7 @@ import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
 
 import { Container } from 'semantic-ui-react';
+import CustomerDetails from '../Customers/CustomerDetails';
 
 const App = () => (
   <Router>
@@ -34,6 +35,7 @@ const App = () => (
         <Route path={ROUTES.ADMIN} component={AdminPage} />
         <Route path={ROUTES.DOMAINS} component={DomainsPage} />
         <Route path={ROUTES.CUSTOMERS} component={CustomersPage} />
+        <Route path={ROUTES.CUSTOMER_DETAILS} component={CustomerDetails} />
       </Container>
     </div>
   </Router>

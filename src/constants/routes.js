@@ -8,3 +8,4 @@ export const ADMIN = '/admin';
 export const ADMIN_DETAILS = '/admin/:id';
 export const DOMAINS = '/domains';
 export const CUSTOMERS = '/customers';
+export const CUSTOMER_DETAILS = '/customer/:id';

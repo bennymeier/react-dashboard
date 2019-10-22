@@ -4,6 +4,7 @@ import { compose } from 'recompose';
 
 import { withAuthorization, withEmailVerification } from '../Session';
 import CustomersList from './CustomersList';
+import CustomerDetails from './CustomerDetails';
 import * as ROLES from '../../constants/roles';
 import * as ROUTES from '../../constants/routes';
 
@@ -12,6 +13,7 @@ const CustomersPage = () => (
     <div>
         <Header as="h2">Customers</Header>
         <Switch>
+            <Route exact path={ROUTES.CUSTOMER_DETAILS} component={CustomerDetails} />
             <Route exact path={ROUTES.CUSTOMERS} component={CustomersList} />
         </Switch>
     </div>

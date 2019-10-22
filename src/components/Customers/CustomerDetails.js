@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-
 import { withFirebase } from '../Firebase';
-import { Card, Loader, Button } from 'semantic-ui-react';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Loader, Button, Form, Label, Icon } from 'semantic-ui-react';
 
 class CustomerDetails extends Component {
     constructor(props) {
@@ -10,22 +11,23 @@ class CustomerDetails extends Component {
         this.state = {
             loading: false,
             customer: null,
+            entryDate: new Date(),
             ...props.location.state,
         };
     }
 
     componentDidMount() {
-        if (this.state.customer) {
-            return;
-        }
-
         this.setState({ loading: true });
-
-        this.props.firebase.customer(this.props.match.params.id).on('value', snapshot => {
-            this.setState({
-                customer: snapshot.val(),
-                loading: false,
-            });
+        const uid = this.props.match.params.id;
+        this.props.firebase.customer(uid).on('value', snapshot => {
+            if (!snapshot.val()) {
+                this.props.history.push('/customers');
+            } else {
+                this.setState({
+                    customer: { uid, ...snapshot.val() },
+                    loading: false,
+                });
+            }
         });
     }
 
@@ -33,40 +35,71 @@ class CustomerDetails extends Component {
         this.props.firebase.customer(this.props.match.params.id).off();
     }
 
+    handleChange = evt => {
+        const { name, value } = evt.target;
+        this.setState({
+            customer: {
+                ...this.state.customer,
+                [name]: value
+            }
+        });
+    };
+
+    setEntryDate = (date) => {
+        this.setState({entryDate: date});
+    };
+
+    updateCostumer = async() => {
+        const { customer: c, entryDate } = this.state;
+        await this.props.firebase.customer(c.uid).update({
+            ...c,
+            entryDate: entryDate,
+            editedAt: this.props.firebase.serverValue.TIMESTAMP,
+        });
+        this.props.history.push('/customers');
+    };
+
     deleteCustomer = uid => {
         this.props.firebase.customer(uid).remove();
     };
     render() {
-        const { customer, loading } = this.state;
-
+        const { customer, loading, entryDate } = this.state;
         return (
-            <Card fluid={true}>
-                {loading ? (
-                    <Loader active inline="centered" />
-                ) : (
-                    <Card.Content>
-                        <Card.Header>User: {customer.uid}</Card.Header>
-                        <Card.Description>
-                            {customer && (
-                                <div>
-                                    <Card.Content>
-                                        <Card.Meta>
-                                            <span>Username: {customer.username}</span>
-                                        </Card.Meta>
-                                        <Card.Description>{customer.email}</Card.Description>
-                                        <br />
-                                        <Button type="button" onClick={this.deleteCustomer}>
-                                            Delete
-                                        </Button>
-                                    </Card.Content>
-                                </div>
-                            )}
-                        </Card.Description>
-                    </Card.Content>
+            <>
+                {loading && (
+                    <Loader active inline />
                 )}
-            </Card>
+                {customer && customer.uid &&
+                    (
+                        <Form>
+                            <Form.Input fluid label='Uid' name="uid" value={customer.uid} disabled />
+                            <Form.Group widths='equal'>
+                                <Form.Input fluid label='First name' name="firstname" onChange={this.handleChange} value={customer.firstname} placeholder='First name' />
+                                <Form.Input fluid label='Last name' name="lastname" onChange={this.handleChange} value={customer.lastname} placeholder='Last name' />
+                                <Form.Field label='Gender' control='select' onChange={this.handleChange} value={customer.gender} name="gender">
+                                    <option value='Male'>Male</option>
+                                    <option value='Female'>Female</option>
+                                    <option value='Other'>Other</option>
+                                </Form.Field>
+                            </Form.Group>
+                            <Form.Group widths='equal'>
+                                <Form.Input fluid label='Phone Number' name="phonenumber" onChange={this.handleChange} value={customer.phonenumber} placeholder='Phone Number' />
+                                <Form.Input fluid label='E-Mail' name="email" onChange={this.handleChange} value={customer.email} placeholder='E-Mail' />
+                            </Form.Group>
+                            <Form.Group widths='equal'>
+                                <Form.TextArea label='About' name="about" onChange={this.handleChange} value={customer.about} placeholder='Some more information about the customer...' />
+                            </Form.Group>
+                            <Form.Group widths='equal'>
+                                <Label>Entry date</Label>
+                                <DatePicker selected={entryDate} onChange={date => this.setEntryDate(date)} name="entrydate" />
+                            </Form.Group>
+                            <Button color="green" onClick={this.updateCostumer}>
+                                <Icon name="checkmark" /> Update
+                            </Button>
+                        </Form>
+                    )}
+            </>
         );
     }
 }
-
 export default withFirebase(CustomerDetails);
