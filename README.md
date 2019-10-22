@@ -25,8 +25,8 @@
 
 * `git clone https://github.com/bennymeier/react-dashboard.git`
 * `cd react-semantic-ui-firebase-authentication`
-* `npm install`
-* `npm start`
+* `yarn install`
+* `yarn start`
 * visit http://localhost:3000
 
 ### Firebase Configuration
