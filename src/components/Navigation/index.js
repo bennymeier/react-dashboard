@@ -4,7 +4,7 @@ import { AuthUserContext } from '../Session';
 import SignOutButton from '../SignOut';
 import * as ROUTES from '../../constants/routes';
 import * as ROLES from '../../constants/roles';
-import { Container, Menu } from 'semantic-ui-react';
+import { Container, Menu, Dropdown, Icon } from 'semantic-ui-react';
 
 const Navigation = () => (
     <AuthUserContext.Consumer>
@@ -23,6 +23,14 @@ const NavigationAuth = ({ authUser }) => (
                     <Menu.Item name="Admin" as={Link} to={ROUTES.ADMIN} />
                     <Menu.Item name="Domains" as={Link} to={ROUTES.DOMAINS} />
                     <Menu.Item name="Customers" as={Link} to={ROUTES.CUSTOMERS} />
+                    <Dropdown text='Todos' pointing className='link item'>
+                        <Dropdown.Menu>
+                            <Dropdown.Item as={Link} to={ROUTES.TODOS}><Icon name="tasks" />All</Dropdown.Item>
+                            <Dropdown.Item><Icon name="add" />Add</Dropdown.Item>
+                            <Dropdown.Divider />
+                            <Dropdown.Item><Icon name="delete" />Delete</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </>
             )
         }

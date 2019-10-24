@@ -101,6 +101,10 @@ class Firebase {
     // *** Customers API ***
     customer = uid => this.db.ref(`customers/${uid}`);
     customers = () => this.db.ref('customers');
+
+    // *** Todos API ***
+    todo = uid => this.db.ref(`todos/${uid}`);
+    todos = () => this.db.ref('todos');
 }
 
 export default Firebase;

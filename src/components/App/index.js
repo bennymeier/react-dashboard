@@ -14,6 +14,7 @@ import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
 import CustomerDetails from '../Customers/CustomerDetails';
 import NavBar from "../Navigation/Navbar";
+import TodosPage from "../Todos/TodosPage";
 
 const App = () => (
   <Router>
@@ -33,6 +34,7 @@ const App = () => (
           <Route path={ROUTES.DOMAINS} component={DomainsPage} />
           <Route path={ROUTES.CUSTOMERS} component={CustomersPage} />
           <Route path={ROUTES.CUSTOMER_DETAILS} component={CustomerDetails} />
+          <Route path={ROUTES.TODOS} component={TodosPage} />
         </Container>
       </NavBar>
     </div>

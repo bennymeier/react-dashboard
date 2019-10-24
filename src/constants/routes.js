@@ -9,3 +9,5 @@ export const ADMIN_DETAILS = '/admin/:id';
 export const DOMAINS = '/domains';
 export const CUSTOMERS = '/customers';
 export const CUSTOMER_DETAILS = '/customer/:id';
+export const TODOS = '/todos';
+export const TODOS_DETAILS = '/todos/:id';
