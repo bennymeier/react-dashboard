@@ -13,21 +13,21 @@ const Navigation = () => (
 );
 
 const NavigationAuth = ({ authUser }) => (
-    <Menu pointing secondary>
-        <Container>
-            <Menu.Item name="Landing" as={Link} to={ROUTES.LANDING} />
-            <Menu.Item name="Home" as={Link} to={ROUTES.HOME} />
-            <Menu.Item name="Account" as={Link} to={ROUTES.ACCOUNT} />
-            {!!authUser.roles[ROLES.ADMIN] && (
+    <>
+        <Menu.Item name="Landing" as={Link} to={ROUTES.LANDING} />
+        <Menu.Item name="Home" as={Link} to={ROUTES.HOME} />
+        <Menu.Item name="Account" as={Link} to={ROUTES.ACCOUNT} />
+        {
+            !!authUser.roles[ROLES.ADMIN] && (
                 <>
                     <Menu.Item name="Admin" as={Link} to={ROUTES.ADMIN} />
                     <Menu.Item name="Domains" as={Link} to={ROUTES.DOMAINS} />
                     <Menu.Item name="Customers" as={Link} to={ROUTES.CUSTOMERS} />
                 </>
-            )}
-            <SignOutButton />
-        </Container>
-    </Menu>
+            )
+        }
+        <SignOutButton />
+    </>
 );
 
 const NavigationNonAuth = () => (

@@ -1,28 +1,6 @@
 import React, { Component, useState } from 'react';
-
 import { withFirebase } from '../Firebase';
-
-import { Header, Loader, Table, Icon, Popup, Modal, Button, Input } from 'semantic-ui-react';
-
-const ModalDeleteDomain = props => {
-    const { open, closeModalFn, domain, saveModalFn } = props;
-    return (
-        <Modal open={open}>
-            <Header icon="trash alternate outline" content={`Delete ${domain}`} />
-            <Modal.Content>
-                <span>Are you sure you want to delete {domain}</span>
-            </Modal.Content>
-            <Modal.Actions>
-                <Button color="red" onClick={() => closeModalFn()}>
-                    <Icon name="remove" /> Cancel
-                </Button>
-                <Button color="green" onClick={() => saveModalFn(domain)}>
-                    <Icon name="checkmark" /> Delete
-                </Button>
-            </Modal.Actions>
-        </Modal>
-    );
-};
+import { Header, Table, Icon, Popup, Modal, Button, Input, Loader } from 'semantic-ui-react';
 
 const ModalUpdateDomain = props => {
     const { closeModalFn, domain: currentDomain, saveModalFn, open, uid } = props;
@@ -37,6 +15,7 @@ const ModalUpdateDomain = props => {
                     fluid
                     onChange={e => setDomain(e.currentTarget.value)}
                     value={domain}
+                    autoFocus
                 />
             </Modal.Content>
             <Modal.Actions>
@@ -65,6 +44,7 @@ const ModalAddDomain = props => {
                         fluid
                         onChange={e => setDomain(e.currentTarget.value)}
                         value={domain}
+                        autoFocus
                     />
                 </>
             </Modal.Content>
@@ -150,56 +130,53 @@ class DomainsList extends Component {
 
         return (
             <>
-                {loading ? (
-                    <Loader active inline />
-                ) : (
-                    <>
-                        <Table singleLine>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell>ID</Table.HeaderCell>
-                                    <Table.HeaderCell>Name</Table.HeaderCell>
-                                    <Table.HeaderCell>Actions</Table.HeaderCell>
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {domains.map((d, i) => (
-                                    <Table.Row key={d.uid}>
-                                        <Table.Cell>{i + 1}</Table.Cell>
-                                        <Table.Cell>{d.text}</Table.Cell>
-                                        <Table.Cell>
-                                            <Popup
-                                                trigger={
-                                                    <Icon
-                                                        name="save outline"
-                                                        color="green"
-                                                        onClick={() => this.openModal('update', d.text, d.uid)}
-                                                    />
-                                                }
-                                                content="Update"
-                                                position="top center"
-                                            />
-                                            <Popup
-                                                trigger={
-                                                    <Icon
-                                                        name="trash alternate outline"
-                                                        color="red"
-                                                        onClick={() => this.deleteDomain(d.uid)}
-                                                    />
-                                                }
-                                                content="Delete"
-                                                position="top center"
-                                            />
-                                        </Table.Cell>
-                                    </Table.Row>
-                                ))}
-                            </Table.Body>
-                        </Table>
-                        <Button color="green" onClick={() => this.openModal('add')}>
-                            <Icon name="add" /> Add Domain
+                <Loader size="big" active={loading}>Loading</Loader>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>ID</Table.HeaderCell>
+                            <Table.HeaderCell>Name</Table.HeaderCell>
+                            <Table.HeaderCell>Actions</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {domains.map((d, i) => (
+                            <Table.Row key={d.uid}>
+                                <Table.Cell>{i + 1}</Table.Cell>
+                                <Table.Cell>{d.text}</Table.Cell>
+                                <Table.Cell>
+                                    <Popup
+                                        trigger={
+                                            <Button basic compact circular icon onClick={() => this.openModal('update', d.text, d.uid)}>
+                                                <Icon
+                                                    name="save outline"
+                                                    color="green"
+                                                />
+                                            </Button>
+                                        }
+                                        content="Update"
+                                        position="top center"
+                                    />
+                                    <Popup
+                                        trigger={
+                                            <Button basic compact circular icon onClick={() => this.deleteDomain(d.uid)}>
+                                                <Icon
+                                                    name="trash alternate outline"
+                                                    color="red"
+                                                />
+                                            </Button>
+                                        }
+                                        content="Delete"
+                                        position="top center"
+                                    />
+                                </Table.Cell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table>
+                <Button color="green" onClick={() => this.openModal('add')}>
+                    <Icon name="add" /> Add Domain
                         </Button>
-                    </>
-                )}
                 {showModal && mode === 'add' && (
                     <ModalAddDomain open={showModal} closeModalFn={this.closeModal} saveModalFn={this.addDomain} />
                 )}

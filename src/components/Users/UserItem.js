@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-
 import { withFirebase } from '../Firebase';
-import { Card, Loader, Button } from 'semantic-ui-react';
+import { Card, Button } from 'semantic-ui-react';
+import Dimmer from "../Helper/Dimmer";
 
 class UserItem extends Component {
   constructor(props) {
@@ -43,10 +43,9 @@ class UserItem extends Component {
     const { user, loading } = this.state;
 
     return (
-      <Card fluid={true}>
-        {loading ? (
-          <Loader active inline="centered" />
-        ) : (
+      <>
+        <Dimmer active={loading} />
+        <Card fluid={true}>
           <Card.Content>
             <Card.Header>User: {user.uid}</Card.Header>
             <Card.Description>
@@ -70,8 +69,8 @@ class UserItem extends Component {
               )}
             </Card.Description>
           </Card.Content>
-        )}
-      </Card>
+        </Card>
+      </>
     );
   }
 }

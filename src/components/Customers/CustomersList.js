@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { withFirebase } from '../Firebase';
-import { Header, Loader, Table, Icon, Popup, Modal, Button, Form } from 'semantic-ui-react';
+import { Header, Table, Icon, Popup, Modal, Button, Form, Loader } from 'semantic-ui-react';
 const ModalAddDomain = props => {
     const { open, closeModalFn, saveModalFn } = props;
     const [entryDate, setEntryDate] = useState(new Date());
@@ -31,7 +31,7 @@ const ModalAddDomain = props => {
                 <>
                     <Form>
                         <Form.Group widths='equal'>
-                            <Form.Input fluid label='First name' name="firstname" onChange={handleChange} placeholder='First name' />
+                            <Form.Input fluid label='First name' name="firstname" onChange={handleChange} placeholder='First name' autoFocus />
                             <Form.Input fluid label='Last name' name="lastname" onChange={handleChange} placeholder='Last name' />
                             <Form.Field label='Gender' control='select' onChange={handleChange} name="gender">
                                 <option value='Male'>Male</option>
@@ -47,7 +47,12 @@ const ModalAddDomain = props => {
                             <Form.TextArea label='About' name="about" onChange={handleChange} placeholder='Some more information about the customer...' />
                         </Form.Group>
                         <Form.Group widths='equal'>
-                            <DatePicker selected={entryDate} onChange={setEntryDate} name="entrydate" />
+                            <div className="field">
+                                <label>Entry date</label>
+                                <div className="ui fluid input">
+                                    <DatePicker selected={entryDate} onChange={setEntryDate} name="entrydate" />
+                                </div>
+                            </div>
                         </Form.Group>
                     </Form>
                 </>
@@ -122,53 +127,50 @@ class CustomersList extends Component {
 
         return (
             <>
-                {loading ? (
-                    <Loader active inline />
-                ) : (
-                        <Table singleLine>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell>ID</Table.HeaderCell>
-                                    <Table.HeaderCell>Name</Table.HeaderCell>
-                                    <Table.HeaderCell>Actions</Table.HeaderCell>
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {customers &&
-                                    customers.map((c, i) => (
-                                        <Table.Row key={c.uid}>
-                                            <Table.Cell>{i + 1}</Table.Cell>
-                                            <Table.Cell>
-                                                {c.lastname}, {c.firstname}
-                                            </Table.Cell>
-                                            <Table.Cell>
-                                                <Popup
-                                                    trigger={
-                                                        <Button basic compact circular icon as={Link} to={`/customer/${c.uid}`}>
-                                                            <Icon name='save outline' color="green" />
-                                                        </Button>
-                                                    }
-                                                    content="Update"
-                                                    position="top center"
+                <Loader size="big" active={loading}>Loading</Loader>
+                <Table singleLine>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>ID</Table.HeaderCell>
+                            <Table.HeaderCell>Name</Table.HeaderCell>
+                            <Table.HeaderCell>Actions</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {customers &&
+                            customers.map((c, i) => (
+                                <Table.Row key={c.uid}>
+                                    <Table.Cell>{i + 1}</Table.Cell>
+                                    <Table.Cell>
+                                        {c.lastname}, {c.firstname}
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        <Popup
+                                            trigger={
+                                                <Button basic compact circular icon as={Link} to={`/customer/${c.uid}`}>
+                                                    <Icon name='save outline' color="green" />
+                                                </Button>
+                                            }
+                                            content="Update"
+                                            position="top center"
+                                        />
+                                        <Popup
+                                            trigger={
+                                                <Button basic compact circular icon onClick={() => this.deleteCustomer(c.uid)}>
+                                                    <Icon
+                                                        name="trash alternate outline"
+                                                        color="red"
                                                     />
-                                                <Popup
-                                                    trigger={
-                                                        <Button basic compact circular icon onClick={() => this.deleteCustomer(c.uid)}>
-                                                            <Icon
-                                                                name="trash alternate outline"
-                                                                color="red"
-                                                                />
-                                                        </Button>
-                                                    }
-                                                    content="Delete"
-                                                    position="top center"
-                                                />
-                                            </Table.Cell>
-                                        </Table.Row>
-                                    ))}
-                            </Table.Body>
-                        </Table>
-                    )}
+                                                </Button>
+                                            }
+                                            content="Delete"
+                                            position="top center"
+                                        />
+                                    </Table.Cell>
+                                </Table.Row>
+                            ))}
+                    </Table.Body>
+                </Table>
                 {showModal && (
                     <ModalAddDomain open={showModal} closeModalFn={this.closeModal} saveModalFn={this.addCustomer} />
                 )}

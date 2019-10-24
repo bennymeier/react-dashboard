@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { withFirebase } from '../Firebase';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Loader, Button, Form, Label, Icon } from 'semantic-ui-react';
-
+import { Button, Form, Icon } from 'semantic-ui-react';
+import Dimmer from "../Helper/Dimmer";
 class CustomerDetails extends Component {
     constructor(props) {
         super(props);
@@ -46,10 +46,10 @@ class CustomerDetails extends Component {
     };
 
     setEntryDate = (date) => {
-        this.setState({entryDate: date});
+        this.setState({ entryDate: date });
     };
 
-    updateCostumer = async() => {
+    updateCostumer = async () => {
         const { customer: c, entryDate } = this.state;
         await this.props.firebase.customer(c.uid).update({
             ...c,
@@ -66,15 +66,13 @@ class CustomerDetails extends Component {
         const { customer, loading, entryDate } = this.state;
         return (
             <>
-                {loading && (
-                    <Loader active inline />
-                )}
+                <Dimmer active={loading} />
                 {customer && customer.uid &&
                     (
                         <Form>
                             <Form.Input fluid label='Uid' name="uid" value={customer.uid} disabled />
                             <Form.Group widths='equal'>
-                                <Form.Input fluid label='First name' name="firstname" onChange={this.handleChange} value={customer.firstname} placeholder='First name' />
+                                <Form.Input fluid label='First name' name="firstname" onChange={this.handleChange} value={customer.firstname} placeholder='First name' autoFocus />
                                 <Form.Input fluid label='Last name' name="lastname" onChange={this.handleChange} value={customer.lastname} placeholder='Last name' />
                                 <Form.Field label='Gender' control='select' onChange={this.handleChange} value={customer.gender} name="gender">
                                     <option value='Male'>Male</option>
@@ -90,8 +88,12 @@ class CustomerDetails extends Component {
                                 <Form.TextArea label='About' name="about" onChange={this.handleChange} value={customer.about} placeholder='Some more information about the customer...' />
                             </Form.Group>
                             <Form.Group widths='equal'>
-                                <Label>Entry date</Label>
-                                <DatePicker selected={entryDate} onChange={date => this.setEntryDate(date)} name="entrydate" />
+                                <div className="field">
+                                    <label>Entry date</label>
+                                    <div className="ui fluid input">
+                                        <DatePicker selected={entryDate} onChange={date => this.setEntryDate(date)} name="entrydate" />
+                                    </div>
+                                </div>
                             </Form.Group>
                             <Button color="green" onClick={this.updateCostumer}>
                                 <Icon name="checkmark" /> Update
